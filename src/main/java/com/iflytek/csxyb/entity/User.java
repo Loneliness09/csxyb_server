@@ -8,11 +8,20 @@ public class User {
     private String phoneNumber; // phoneNumber; 手机号
     private String email; // email; 邮箱
     private String wx; // wx; 微信号
-    private UserType type; // type; 用户类型 {admin, regular}
-    private String avatar; // userTxImg; 用户头像 (图片链接)
+    private UserType type = UserType.regular; // type; 用户类型 {admin, regular}
+    private String avatar = "/images/userTx/41bc9d83-68f7-44d7-9e4c-5342d746b649.jpg"; // userTxImg; 用户头像 (图片链接)
     private String remark; // geXin; 个性签名
     private int following; // GuanZhu; 关注数
     private int fans; // Fans; 粉丝数
+
+    public User(String userName, String loginText, String password) {
+        this.userName = userName;
+        this.loginText = loginText;
+        this.password = password;
+    }
+
+    public User() {
+    }
 
     public User(String loginText, String password) {
         this.loginText = loginText;
