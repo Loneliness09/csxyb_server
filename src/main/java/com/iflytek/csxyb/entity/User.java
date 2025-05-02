@@ -1,7 +1,7 @@
 package com.iflytek.csxyb.entity;
 
 public class User {
-    private String userId; // userId; 用户ID
+    private int userId; // userId; 用户ID
     private String userName; // userName; 用户昵称
     private String loginText; // loginText; 登录账号
     private String password; // password; 密码
@@ -13,6 +13,7 @@ public class User {
     private String remark; // geXin; 个性签名
     private int following; // GuanZhu; 关注数
     private int fans; // Fans; 粉丝数
+    private int status;
 
     public User(String userName, String loginText, String password) {
         this.userName = userName;
@@ -28,7 +29,7 @@ public class User {
         this.password = password;
     }
 
-    public User(String userId, String userName, String loginText, String password, String phoneNumber, String email, String wx, UserType type, String avatar, String remark, int following, int fans) {
+    public User(int userId, String userName, String loginText, String password, String phoneNumber, String email, String wx, UserType type, String avatar, String remark, int following, int fans, int status) {
         this.userId = userId;
         this.userName = userName;
         this.loginText = loginText;
@@ -41,6 +42,7 @@ public class User {
         this.remark = remark;
         this.following = following;
         this.fans = fans;
+        this.status = status;
     }
 
     @Override
@@ -61,11 +63,11 @@ public class User {
                 '}';
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -155,5 +157,13 @@ public class User {
 
     public void setFans(int fans) {
         this.fans = fans;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

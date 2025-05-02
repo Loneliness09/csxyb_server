@@ -7,7 +7,28 @@ import com.iflytek.csxyb.service.UserService;
 
 public class UserServiceImpl implements UserService {
     UserDao userDao = new UserDaoImpl();
-    public User login(User user) {
-        return userDao.select(user);
+
+    @Override
+    public User loginByText(String loginText, String password) {
+        User user = new User();
+        user.setLoginText(loginText);
+        user.setPassword(password);
+        return userDao.loginByText(user);
     }
+
+    @Override
+    public int register(User user) {
+        return userDao.insert(user);
+    }
+
+    @Override
+    public int unRegister(User user) {
+        return userDao.delete(user);
+    }
+
+    @Override
+    public int updateUser(User user) {
+        return userDao.update(user);
+    }
+
 }

@@ -22,7 +22,7 @@ public class LoginFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
         String uri = req.getRequestURI();
-        if (uri.contains("/LoginServlet") || uri.contains(".jsp")){
+        if (uri.contains("/UserLoginServlet") || uri.contains(".jsp")){
             chain.doFilter(request, response);
         }else {
             Object loginUser = req.getSession().getAttribute("loginUser");

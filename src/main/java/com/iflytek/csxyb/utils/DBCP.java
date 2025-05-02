@@ -44,7 +44,7 @@ public class DBCP {
      * @return Connection
      * @throws SQLException
      */
-    public static Connection getConnection() throws SQLException{
+    public static Connection getConnection() throws SQLException {
         //从数据源中获取数据库连接
         return ds.getConnection();
     }

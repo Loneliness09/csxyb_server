@@ -24,7 +24,7 @@ public class AdminFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
         HttpServletRequest req = (HttpServletRequest) request;
         User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (loginUser.getType() == UserType.admin){//合法用户
+        if (loginUser != null && loginUser.getType() == UserType.admin) { // 合法管理员
             chain.doFilter(request, response);
         } else {
             response.setContentType("application/json");
