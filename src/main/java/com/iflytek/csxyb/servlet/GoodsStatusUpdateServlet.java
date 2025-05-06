@@ -33,7 +33,7 @@ public class GoodsStatusUpdateServlet extends HttpServlet {
      *
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
-     * req.Pram:
+     * req.Param:
      * goodsId: 商品ID
      * @return:
      * resp.status: 200

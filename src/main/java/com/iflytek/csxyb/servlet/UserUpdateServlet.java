@@ -33,7 +33,7 @@ public class UserUpdateServlet extends HttpServlet {
      *
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
-     * req.Pram:
+     * req.Param:
      * userId: 用户ID
      * userName: 用户昵称
      * loginText: 登录名

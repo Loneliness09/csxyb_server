@@ -30,7 +30,7 @@ public class UserLoginServlet extends HttpServlet {
      *
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
-     * req.Pram:
+     * req.Param:
      * loginText: 用户登录名
      * password: 密码
      * @return:

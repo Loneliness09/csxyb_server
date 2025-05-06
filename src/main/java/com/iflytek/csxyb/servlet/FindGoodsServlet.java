@@ -30,7 +30,7 @@ public class FindGoodsServlet extends HttpServlet {
      *
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
-     * req.Pram:
+     * req.Param:
      * goodsName: 查询商品名称(模糊查询, 为空即查询全部)
      * pageSize: 每页数据量
      * pageNum: 页数(从1开始)

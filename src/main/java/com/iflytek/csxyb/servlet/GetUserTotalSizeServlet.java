@@ -32,7 +32,7 @@ public class GetUserTotalSizeServlet extends HttpServlet {
      *
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
-     * req.Pram:
+     * req.Param:
      * goodsName: 查询用户名称(模糊查询, 为空即查询全部)
      * userType: 用户类型 enum('admin', 'regular'), 不可为root
      * @return:

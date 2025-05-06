@@ -33,7 +33,7 @@ public class UserUnRegisterServlet extends HttpServlet {
      *
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
-     * req.Pram:
+     * req.Param:
      * userId: 用户ID
      * @return:
      * resp.status: 200
