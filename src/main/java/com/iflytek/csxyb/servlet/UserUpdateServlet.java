@@ -26,6 +26,26 @@ public class UserUpdateServlet extends HttpServlet {
         doPost(req, resp);
     }
 
+    /**
+     * @Method: doPost
+     * @Description: 用户修改
+     * @Anthor: Jarvis Sun
+     *
+     * @param req: HttpServletRequest
+     * @param resp: HttpServletResponse
+     * req.Pram:
+     * userId: 用户ID
+     * userName: 用户昵称
+     * loginText: 登录名
+     * password: 密码
+     * phoneNumber: 手机号
+     * email: 邮箱
+     * wx: 微信号
+     * type: 用户类型 {admin, regular}
+     * remark: 个性签名
+     * @return:
+     * resp.status: 200
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");

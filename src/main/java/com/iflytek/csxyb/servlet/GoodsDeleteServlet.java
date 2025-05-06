@@ -26,6 +26,18 @@ public class GoodsDeleteServlet extends HttpServlet {
         doPost(req, resp);
     }
 
+    /**
+     * @Method: doPost
+     * @Description: 商品删除
+     * @Anthor: Jarvis Sun
+     *
+     * @param req: HttpServletRequest
+     * @param resp: HttpServletResponse
+     * req.Pram:
+     * goodsId: 商品ID
+     * @return:
+     * resp.status: 200
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");

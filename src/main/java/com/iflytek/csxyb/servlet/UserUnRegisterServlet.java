@@ -19,13 +19,25 @@ import java.util.Map;
 
 @WebServlet(name = "UserUnRegisterServlet", value = "/UserUnRegisterServlet")
 public class UserUnRegisterServlet extends HttpServlet {
-    private Logger log = LogManager.getRootLogger();
+    private final Logger log = LogManager.getRootLogger();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
     }
 
+    /**
+     * @Method: doPost
+     * @Description: 用户注销
+     * @Anthor: Jarvis Sun
+     *
+     * @param req: HttpServletRequest
+     * @param resp: HttpServletResponse
+     * req.Pram:
+     * userId: 用户ID
+     * @return:
+     * resp.status: 200
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");

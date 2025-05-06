@@ -25,6 +25,21 @@ public class FindUserServlet extends HttpServlet {
         doPost(req, resp);
     }
 
+    /**
+     * @Method: doPost
+     * @Description: 查找用户
+     * @Anthor: Jarvis Sun
+     *
+     * @param req: HttpServletRequest
+     * @param resp: HttpServletResponse
+     * req.Pram:
+     * goodsName: 查询用户名称(模糊查询, 为空即查询全部)
+     * pageSize: 每页数据量
+     * pageNum: 页数(从1开始)
+     * userType: 用户类型 enum('admin', 'regular'), 不可为root
+     * @return:
+     * resp.data: List<User>
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");

@@ -24,6 +24,18 @@ public class GetGoodsTotalSizeServlet extends HttpServlet {
         doPost(req, resp);
     }
 
+    /**
+     * @Method: doPost
+     * @Description: 获取查找商品的总数
+     * @Anthor: Jarvis Sun
+     *
+     * @param req: HttpServletRequest
+     * @param resp: HttpServletResponse
+     * req.Pram:
+     * goodsName: 查询商品名称(模糊查询, 为空即查询全部)
+     * @return:
+     * resp.totalSize: int
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");

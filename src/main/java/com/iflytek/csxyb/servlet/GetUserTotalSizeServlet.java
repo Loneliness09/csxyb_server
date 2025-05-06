@@ -25,6 +25,19 @@ public class GetUserTotalSizeServlet extends HttpServlet {
         doPost(req, resp);
     }
 
+    /**
+     * @Method: doPost
+     * @Description: 获取查找用户的总数
+     * @Anthor: Jarvis Sun
+     *
+     * @param req: HttpServletRequest
+     * @param resp: HttpServletResponse
+     * req.Pram:
+     * goodsName: 查询用户名称(模糊查询, 为空即查询全部)
+     * userType: 用户类型 enum('admin', 'regular'), 不可为root
+     * @return:
+     * resp.totalSize: int
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");

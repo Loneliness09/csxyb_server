@@ -70,6 +70,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findUserByName(User user, String userName, int pageNum, int pageSize, UserType type) {
+        if (type==UserType.root) {
+            return null;
+        }
         if (user.getType() != UserType.regular) {
             if (userName == null || "".equals(userName)) {
                 return userDao.selectAll(pageNum, pageSize, type);
@@ -83,6 +86,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int getUserTotalSizeByName(User user, String userName, UserType type) {
+        if (type==UserType.root) {
+            return 0;
+        }
         if (user.getType() != UserType.regular) {
             if (userName == null || "".equals(userName)) {
                 return userDao.getTotalSizeAll(type);
