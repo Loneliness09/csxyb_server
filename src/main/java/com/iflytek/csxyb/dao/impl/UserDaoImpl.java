@@ -1,6 +1,7 @@
 package com.iflytek.csxyb.dao.impl;
 
 import com.iflytek.csxyb.dao.UserDao;
+import com.iflytek.csxyb.entity.Goods;
 import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.entity.UserType;
 import com.iflytek.csxyb.utils.DBCP;
@@ -29,9 +30,32 @@ public class UserDaoImpl implements UserDao {
     }
 
     private PreparedStatement createSelectAllPreparedStatement(Connection conn, int pageNum, int pageSize) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from user limit ?, ?");
+        PreparedStatement ps = conn.prepareStatement("select * from user where type!='root' limit ?, ?");
         ps.setInt(1, (pageNum - 1) * pageSize);
         ps.setInt(2, pageSize);
+        return ps;
+    }
+
+    @Override
+    public List<User> selectByName(String userName, int pageNum, int pageSize) {
+        List<User> resLst = new ArrayList<>();
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createSelectByNamePreparedStatement(conn, userName, pageNum, pageSize);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resLst.add(mapRowToUser(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resLst;
+    }
+
+    private PreparedStatement createSelectByNamePreparedStatement(Connection conn, String userName, int pageNum, int pageSize) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from user where userName like ? and type!='root' limit ?, ?");
+        ps.setString(1, "%" + userName + "%");
+        ps.setInt(2, (pageNum - 1) * pageSize);
+        ps.setInt(3, pageSize);
         return ps;
     }
 
@@ -59,7 +83,7 @@ public class UserDaoImpl implements UserDao {
         return ps;
     }
 
-    private User mapRowToUser(ResultSet rs) throws SQLException {
+    public static User mapRowToUser(ResultSet rs) throws SQLException {
         if (rs == null) {
             return null;
         }
@@ -177,4 +201,27 @@ public class UserDaoImpl implements UserDao {
         ps.setInt(2, user.getUserId());
         return ps;
     }
+
+    @Override
+    public UserType findUserType(User user) {
+        UserType userType = null;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createFindUserTypePreparedStatement(conn, user);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                userType = UserType.valueOf(rs.getString("type"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userType;
+    }
+
+    private PreparedStatement createFindUserTypePreparedStatement(Connection conn, User user) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("SELECT type FROM user WHERE userId=?");
+        ps.setInt(1, user.getUserId());
+        return ps;
+    }
+
+
 }

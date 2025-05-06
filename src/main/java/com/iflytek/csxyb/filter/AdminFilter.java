@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebFilter(filterName = "AdminFilter", value = "/AdminServlet")
+@WebFilter(filterName = "AdminFilter", value = "/FindUserServlet")
 public class AdminFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
     }
@@ -22,9 +22,11 @@ public class AdminFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         HttpServletRequest req = (HttpServletRequest) request;
         User loginUser = (User) req.getSession().getAttribute("loginUser");
-        if (loginUser != null && loginUser.getType() == UserType.admin) { // 合法管理员
+        if (loginUser != null && loginUser.getType() != UserType.regular) { // 合法管理员
             chain.doFilter(request, response);
         } else {
             response.setContentType("application/json");

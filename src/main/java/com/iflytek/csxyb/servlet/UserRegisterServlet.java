@@ -9,13 +9,16 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "UserLoginServlet", value = "/UserLoginServlet")
-public class UserLoginServlet extends HttpServlet {
+@WebServlet(name = "UserRegisterServlet", value = "/UserRegisterServlet")
+public class UserRegisterServlet extends HttpServlet {
     private Logger log = LogManager.getRootLogger();
 
     @Override
@@ -30,16 +33,13 @@ public class UserLoginServlet extends HttpServlet {
         String loginText = req.getParameter("loginText");
         String password = req.getParameter("password");
         UserService userService = new UserServiceImpl();
-        User resUser = userService.loginByText(loginText, password);
-        log.info("进入登录操作，用户名：" + loginText);
-        log.error("登录操作结果：" + (resUser != null ? "成功" : "失败"));
+        int success = userService.register(loginText, password);
+        log.info("进入注册操作，用户名：" + loginText);
+        log.error("登录操作结果：" + (success != 0 ? "成功" : "失败"));
         resp.setContentType("application/json");
         Map<String, Object> resData = new HashMap<String, Object>();
-        if (resUser != null) {
+        if (success != 0) {
             ServletBase.reqSuccess(resData);
-            req.getSession().setAttribute("loginUser", resUser);
-            Cookie c = new Cookie("name", resUser.getUserName());
-            resp.addCookie(c);
         } else {
             ServletBase.reqFail(resData);
         }

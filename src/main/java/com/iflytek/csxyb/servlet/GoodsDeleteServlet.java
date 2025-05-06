@@ -1,6 +1,5 @@
 package com.iflytek.csxyb.servlet;
 
-import com.google.gson.Gson;
 import com.iflytek.csxyb.entity.Goods;
 import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.entity.UserType;
@@ -14,16 +13,17 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-@WebServlet(name = "FindGoodsServlet", value = "/FindGoodsServlet")
-public class FindGoodsServlet extends HttpServlet {
-    private final Logger log = LogManager.getRootLogger();
+
+@WebServlet(name = "GoodsDeleteServlet", value = "/GoodsDeleteServlet")
+public class GoodsDeleteServlet extends HttpServlet {
+    private Logger log = LogManager.getRootLogger();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -33,22 +33,25 @@ public class FindGoodsServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
+        int goodsId = Integer.parseInt(req.getParameter("goodsId"));
         User user = (User) req.getSession().getAttribute("loginUser");
-        resp.setContentType("application/json");
+        GoodsService goodsService = new GoodsServiceImpl();
+        Goods delGoods = new Goods();
+        delGoods.setGoodsId(goodsId);
         Map<String, Object> resData = new HashMap<>();
         if (user == null) {
             ServletBase.reqFail(resData);
-            log.error("查询商品操作结果：失败, 未登录");
+            log.error("删除商品操作结果：失败, 未登录");
         } else {
-            log.info("进入查询商品操作，用户名：" + user.getUserName());
-            GoodsService goodsService = new GoodsServiceImpl();
-            String name = req.getParameter("goodsName");
-            int pageSize = Integer.parseInt(req.getParameter("pageSize"));
-            int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-            List<Goods> goodsList = goodsService.findGoodsByName(user, name, pageNum, pageSize);
-            log.error("查询商品操作结果：" + (goodsList != null ? "成功" : "失败"));
-            resData.put("data", goodsList);
-            ServletBase.reqSuccess(resData);
+            int success = goodsService.deleteGoods(user, delGoods);
+            log.info("进入删除商品操作，删除商品ID：" + goodsId + " 操作用户ID：" + user.getUserId());
+            log.error("删除商品操作结果：" + (success != 0 ? "成功" : "失败"));
+            resp.setContentType("application/json");
+            if (success != 0) {
+                ServletBase.reqSuccess(resData);
+            } else {
+                ServletBase.reqFail(resData);
+            }
         }
         ServletBase.writeJsonToResp(resp, resData);
     }

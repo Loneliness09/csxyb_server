@@ -166,4 +166,26 @@ public class User {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public static boolean cmpUser(User a, User b) {
+        return cmpUserType(a.getType(), b.getType());
+    }
+
+    public static boolean cmpUserType(UserType a, UserType b) {
+        int ta = mapUserTypeToInt(a);
+        int tb = mapUserTypeToInt(b);
+        return ta > tb;
+    }
+
+    private static int mapUserTypeToInt(UserType userType) {
+        if (userType==UserType.regular) {
+            return 0;
+        } else if (userType==UserType.admin) {
+            return 1;
+        } else if (userType==UserType.root) {
+            return 2;
+        } else {
+            return -1;
+        }
+    }
 }

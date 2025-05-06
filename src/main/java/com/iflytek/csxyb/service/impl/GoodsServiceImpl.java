@@ -12,18 +12,22 @@ import java.util.List;
 public class GoodsServiceImpl implements GoodsService {
     GoodsDao goodsDao = new GoodsDaoImpl();
     @Override
-    public List<Goods> findAllGoods(int pageNum, int pageSize) {
-        return goodsDao.selectAll(pageNum, pageSize);
+    public int deleteGoods(User user, Goods goods) {
+        User owner = goodsDao.findGoodsOwner(goods);
+        if (user.getType() == UserType.regular && user.getUserId() != owner.getUserId()) {
+            return 0;
+        } else {
+            return goodsDao.delete(goods);
+        }
     }
 
     @Override
-    public int deleteGoods(Goods goods) {
-        return goodsDao.delete(goods);
-    }
-
-    @Override
-    public int updateGoods(Goods goods) {
-        return goodsDao.update(goods);
+    public int updateGoods(User user, Goods goods) {
+        if (user.getType() == UserType.regular && user.getUserId() != goods.getUserId()) {
+            return 0;
+        } else {
+            return goodsDao.update(goods);
+        }
     }
 
     @Override

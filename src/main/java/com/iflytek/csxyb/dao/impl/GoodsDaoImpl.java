@@ -2,6 +2,7 @@ package com.iflytek.csxyb.dao.impl;
 
 import com.iflytek.csxyb.dao.GoodsDao;
 import com.iflytek.csxyb.entity.Goods;
+import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.utils.DBCP;
 
 import java.sql.*;
@@ -54,10 +55,10 @@ public class GoodsDaoImpl implements GoodsDao {
 
 
     @Override
-    public int insert(Goods Goods) {
+    public int insert(Goods goods) {
         int affectedRows = 0;
         try (Connection conn = DBCP.getConnection();
-             PreparedStatement ps = createInsertPreparedStatement(conn, Goods)) {
+             PreparedStatement ps = createInsertPreparedStatement(conn, goods)) {
             affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Inserting Goods failed, no rows affected.");
@@ -85,10 +86,10 @@ public class GoodsDaoImpl implements GoodsDao {
 
 
     @Override
-    public int update(Goods Goods) {
+    public int update(Goods goods) {
         int affectedRows = 0;
         try (Connection conn = DBCP.getConnection();
-             PreparedStatement ps = createUpdatePreparedStatement(conn, Goods)) {
+             PreparedStatement ps = createUpdatePreparedStatement(conn, goods)) {
             affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Updating Goods failed, no rows affected.");
@@ -111,16 +112,14 @@ public class GoodsDaoImpl implements GoodsDao {
         ps.setDouble(6, goods.getGoodsPrice());
         ps.setString(7, goods.getGoodsPriceText());
         ps.setInt(8, goods.getGoodsId());
-
         return ps;
     }
 
-
     @Override
-    public int delete(Goods Goods) {
+    public int delete(Goods goods) {
         int affectedRows = 0;
         try (Connection conn = DBCP.getConnection();
-             PreparedStatement ps = createDeletePreparedStatement(conn, Goods)) {
+             PreparedStatement ps = createDeletePreparedStatement(conn, goods)) {
             affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Deleting Goods failed, no rows affected.");
@@ -131,9 +130,9 @@ public class GoodsDaoImpl implements GoodsDao {
         return affectedRows;
     }
 
-    private PreparedStatement createDeletePreparedStatement(Connection conn, Goods Goods) throws SQLException {
+    private PreparedStatement createDeletePreparedStatement(Connection conn, Goods goods) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("DELETE FROM Goods WHERE GoodsId=?");
-        ps.setInt(1, Goods.getGoodsId());
+        ps.setInt(1, goods.getGoodsId());
         return ps;
     }
 
@@ -156,7 +155,7 @@ public class GoodsDaoImpl implements GoodsDao {
 
     private PreparedStatement createSelectByNamePreparedStatement(Connection conn, String name, int pageNum, int pageSize) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from Goods where goodsText like ? limit ?, ?");
-        ps.setString(1, name);
+        ps.setString(1, "%" + name + "%");
         ps.setInt(2, (pageNum - 1) * pageSize);
         ps.setInt(3, pageSize);
         return ps;
@@ -203,9 +202,54 @@ public class GoodsDaoImpl implements GoodsDao {
     private PreparedStatement createSelectByIdAndNamePreparedStatement(Connection conn, int userId, String name, int pageNum, int pageSize) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from Goods where userId=? and goodsText like ? limit ?, ?");
         ps.setInt(1, userId);
-        ps.setString(2, name);
+        ps.setString(2, "%" + name + "%");
         ps.setInt(3, (pageNum - 1) * pageSize);
         ps.setInt(4, pageSize);
+        return ps;
+    }
+
+    @Override
+    public int updateStatus(Goods goods) {
+        int affectedRows = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createUpdateStatusPreparedStatement(conn, goods)) {
+            affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Updating Goods failed, no rows affected.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return affectedRows;
+    }
+
+    private PreparedStatement createUpdateStatusPreparedStatement(Connection conn, Goods goods) throws SQLException {
+        // 注意：SQL语句中的列名和值占位符应根据实际数据库表结构进行调整
+        String sql = "UPDATE Goods SET status=? WHERE goodsId=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, (goods.getStatus() == 0 ? 1 : 0));
+        ps.setInt(2, goods.getGoodsId());
+        return ps;
+    }
+
+    @Override
+    public User findGoodsOwner(Goods goods) {
+        User resUser = null;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createFindGoodsOwnerPreparedStatement(conn, goods);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                resUser = UserDaoImpl.mapRowToUser(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resUser;
+    }
+
+    private PreparedStatement createFindGoodsOwnerPreparedStatement(Connection conn, Goods goods) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from user where userId=?");
+        ps.setInt(1, goods.getUserId());
         return ps;
     }
 }

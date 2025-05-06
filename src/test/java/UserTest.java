@@ -38,7 +38,7 @@ public class UserTest {
         String password = "123";
         User user = userService.loginByText(loginText, password);
         user.setPhoneNumber("123456");
-        int n = userService.updateUser(user);
+        int n = userService.updateUser(user, user);
         System.out.println(n);
     }
 
@@ -47,7 +47,7 @@ public class UserTest {
         String loginText = "hahaha";
         String password = "123";
         User user = userService.loginByText(loginText, password);
-        int n = userService.unRegister(user);
+        int n = userService.unRegister(user, user);
         System.out.println(n);
     }
 

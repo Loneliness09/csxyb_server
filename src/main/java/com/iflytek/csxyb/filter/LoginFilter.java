@@ -20,7 +20,9 @@ public class LoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         HttpServletRequest req = (HttpServletRequest) request;
+        response.setCharacterEncoding("UTF-8");
         String uri = req.getRequestURI();
         if (uri.contains("/UserLoginServlet") || uri.contains(".jsp")){
             chain.doFilter(request, response);
