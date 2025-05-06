@@ -209,6 +209,89 @@ public class GoodsDaoImpl implements GoodsDao {
     }
 
     @Override
+    public int getTotalSize() {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizePreparedStatement(conn);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizePreparedStatement(Connection conn) throws SQLException {
+        return conn.prepareStatement("select count(goodsId) from Goods");
+    }
+
+    @Override
+    public int getTotalSizeByName(String name) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByNamePreparedStatement(conn, name);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeByNamePreparedStatement(Connection conn, String name) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(goodsId) from Goods where goodsText like ?");
+        ps.setString(1, "%" + name + "%");
+        return ps;
+    }
+
+    @Override
+    public int getTotalSizeById(int userId) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByIdPreparedStatement(conn, userId);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeByIdPreparedStatement(Connection conn, int userId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(goodsId) from Goods where userId=?");
+        ps.setInt(1, userId);
+        return ps;
+    }
+
+    @Override
+    public int getTotalSizeByIdAndName(int userId, String name) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByIdAndNamePreparedStatement(conn, userId, name);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeByIdAndNamePreparedStatement(Connection conn, int userId, String name) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(goodsId) from Goods where userId=? and goodsText like ?");
+        ps.setInt(1, userId);
+        ps.setString(2, "%" + name + "%");
+        return ps;
+    }
+
+    @Override
     public int updateStatus(Goods goods) {
         int affectedRows = 0;
         try (Connection conn = DBCP.getConnection();
@@ -250,6 +333,27 @@ public class GoodsDaoImpl implements GoodsDao {
     private PreparedStatement createFindGoodsOwnerPreparedStatement(Connection conn, Goods goods) throws SQLException {
         PreparedStatement ps = conn.prepareStatement("select * from user where userId=?");
         ps.setInt(1, goods.getUserId());
+        return ps;
+    }
+
+    @Override
+    public Goods findGoods(int goodsId) {
+        Goods resGoods = null;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createFindGoodsPreparedStatement(conn, goodsId);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                resGoods = mapRowToGoods(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resGoods;
+    }
+
+    private PreparedStatement createFindGoodsPreparedStatement(Connection conn, int goodsId) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from goods where goodsId=?");
+        ps.setInt(1, goodsId);
         return ps;
     }
 }

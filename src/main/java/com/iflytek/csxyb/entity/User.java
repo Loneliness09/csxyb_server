@@ -177,6 +177,15 @@ public class User {
         return ta > tb;
     }
 
+    public static boolean cmpLEUser(User a, User b) {
+        return cmpLEUserType(a.getType(), b.getType());
+    }
+    public static boolean cmpLEUserType(UserType a, UserType b) {
+        int ta = mapUserTypeToInt(a);
+        int tb = mapUserTypeToInt(b);
+        return ta >= tb;
+    }
+
     private static int mapUserTypeToInt(UserType userType) {
         if (userType==UserType.regular) {
             return 0;

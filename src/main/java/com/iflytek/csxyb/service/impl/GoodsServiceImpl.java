@@ -14,6 +14,9 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public int deleteGoods(User user, Goods goods) {
         User owner = goodsDao.findGoodsOwner(goods);
+        if (User.cmpUser(owner, user)) {
+            return -1;
+        }
         if (user.getType() == UserType.regular && user.getUserId() != owner.getUserId()) {
             return 0;
         } else {
@@ -31,6 +34,16 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    public int updateStatus(User user, Goods goods) {
+        Goods goods1 = goodsDao.findGoods(goods.getGoodsId());
+        if (user.getType() == UserType.regular && goods1.getUserId() != user.getUserId()) {
+            return 0;
+        } else {
+            return goodsDao.updateStatus(goods1);
+        }
+    }
+
+    @Override
     public List<Goods> findGoodsByName(User user, String goodsName, int pageNum, int pageSize) {
         if (user.getType() != UserType.regular) {
             if (goodsName == null || "".equals(goodsName)) {
@@ -43,6 +56,23 @@ public class GoodsServiceImpl implements GoodsService {
                 return goodsDao.selectById(user.getUserId(), pageNum, pageSize);
             } else {
                 return goodsDao.selectByIdAndName(user.getUserId(), goodsName, pageNum, pageSize);
+            }
+        }
+    }
+
+    @Override
+    public int getGoodsTotalSizeByName(User user, String goodsName) {
+        if (user.getType() != UserType.regular) {
+            if (goodsName == null || "".equals(goodsName)) {
+                return goodsDao.getTotalSize();
+            } else {
+                return goodsDao.getTotalSizeByName(goodsName);
+            }
+        } else {
+            if (goodsName == null || "".equals(goodsName)) {
+                return goodsDao.getTotalSizeById(user.getUserId());
+            } else {
+                return goodsDao.getTotalSizeByIdAndName(user.getUserId(), goodsName);
             }
         }
     }

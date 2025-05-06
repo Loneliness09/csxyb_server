@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "GoodsDeleteServlet", value = "/GoodsDeleteServlet")
-public class GoodsDeleteServlet extends HttpServlet {
+@WebServlet(name = "GoodsStatusUpdateServlet", value = "/GoodsStatusUpdateServlet")
+public class GoodsStatusUpdateServlet extends HttpServlet {
     private final Logger log = LogManager.getRootLogger();
 
     @Override
@@ -33,19 +33,16 @@ public class GoodsDeleteServlet extends HttpServlet {
         int goodsId = Integer.parseInt(req.getParameter("goodsId"));
         User user = (User) req.getSession().getAttribute("loginUser");
         GoodsService goodsService = new GoodsServiceImpl();
-        Goods delGoods = new Goods();
-        delGoods.setGoodsId(goodsId);
+        Goods updGoods = new Goods();
+        updGoods.setGoodsId(goodsId);
         Map<String, Object> resData = new HashMap<>();
         if (user == null) {
             ServletBase.reqFail(resData);
-            log.error("删除商品操作结果：失败, 未登录");
+            log.error("更新商品状态操作结果：失败, 未登录");
         } else {
-            int success = goodsService.deleteGoods(user, delGoods);
-            log.info("进入删除商品操作，删除商品ID：" + goodsId + " 操作用户ID：" + user.getUserId());
-            log.error("删除商品操作结果：" + (success == 1 ? "成功" : "失败"));
-            if (success == -1) {
-                log.error("用户权限不足。");
-            }
+            int success = goodsService.updateStatus(user, updGoods);
+            log.info("进入更新商品状态操作，删除商品ID：" + goodsId + " 操作用户ID：" + user.getUserId());
+            log.error("更新商品状态操作结果：" + (success != 0 ? "成功" : "失败"));
             resp.setContentType("application/json");
             if (success != 0) {
                 ServletBase.reqSuccess(resData);

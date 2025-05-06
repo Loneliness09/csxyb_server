@@ -1,6 +1,5 @@
 package com.iflytek.csxyb.servlet;
 
-import com.iflytek.csxyb.entity.Goods;
 import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.service.GoodsService;
 import com.iflytek.csxyb.service.impl.GoodsServiceImpl;
@@ -17,10 +16,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet(name = "GoodsDeleteServlet", value = "/GoodsDeleteServlet")
-public class GoodsDeleteServlet extends HttpServlet {
+@WebServlet(name = "GetGoodsTotalSizeServlet", value = "/GetGoodsTotalSizeServlet")
+public class GetGoodsTotalSizeServlet extends HttpServlet {
     private final Logger log = LogManager.getRootLogger();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -30,28 +28,20 @@ public class GoodsDeleteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-        int goodsId = Integer.parseInt(req.getParameter("goodsId"));
         User user = (User) req.getSession().getAttribute("loginUser");
-        GoodsService goodsService = new GoodsServiceImpl();
-        Goods delGoods = new Goods();
-        delGoods.setGoodsId(goodsId);
+        resp.setContentType("application/json");
         Map<String, Object> resData = new HashMap<>();
         if (user == null) {
             ServletBase.reqFail(resData);
-            log.error("删除商品操作结果：失败, 未登录");
+            log.error("查询商品总数操作结果：失败, 未登录");
         } else {
-            int success = goodsService.deleteGoods(user, delGoods);
-            log.info("进入删除商品操作，删除商品ID：" + goodsId + " 操作用户ID：" + user.getUserId());
-            log.error("删除商品操作结果：" + (success == 1 ? "成功" : "失败"));
-            if (success == -1) {
-                log.error("用户权限不足。");
-            }
-            resp.setContentType("application/json");
-            if (success != 0) {
-                ServletBase.reqSuccess(resData);
-            } else {
-                ServletBase.reqFail(resData);
-            }
+            log.info("进入查询商品总数操作，用户名：" + user.getUserName());
+            GoodsService goodsService = new GoodsServiceImpl();
+            String name = req.getParameter("goodsName");
+            int totalSize = goodsService.getGoodsTotalSizeByName(user, name);
+            log.error("查询商品总数操作结果：" + (totalSize != 0 ? "成功" : "失败"));
+            resData.put("totalSize", String.valueOf(totalSize));
+            ServletBase.reqSuccess(resData);
         }
         ServletBase.writeJsonToResp(resp, resData);
     }

@@ -10,16 +10,16 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "FindUserServlet", value = "/FindUserServlet")
-public class FindUserServlet extends HttpServlet {
+@WebServlet(name = "GetUserTotalSizeServlet", value = "/GetUserTotalSizeServlet")
+public class GetUserTotalSizeServlet extends HttpServlet {
     private final Logger log = LogManager.getRootLogger();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -34,20 +34,15 @@ public class FindUserServlet extends HttpServlet {
         Map<String, Object> resData = new HashMap<>();
         if (user == null) {
             ServletBase.reqFail(resData);
-            log.error("查询用户操作结果：失败, 未登录");
-        } else if (user.getType() == UserType.regular) {
-            ServletBase.reqFail(resData);
-            log.error("查询用户操作结果：失败, 用户权限不足");
+            log.error("查询商品总数操作结果：失败, 未登录");
         } else {
-            log.info("进入查询用户操作，用户名：" + user.getUserName());
+            log.info("进入查询商品总数操作，用户名：" + user.getUserName());
             UserService userService = new UserServiceImpl();
             String name = req.getParameter("userName");
-            int pageSize = Integer.parseInt(req.getParameter("pageSize"));
-            int pageNum = Integer.parseInt(req.getParameter("pageNum"));
             UserType type = UserType.valueOf(req.getParameter("userType"));
-            List<User> userList = userService.findUserByName(user, name, pageNum, pageSize, type);
-            log.error("查询用户操作结果：" + (userList != null ? "成功" : "失败, 未找到指定用户"));
-            resData.put("data", userList);
+            int totalSize = userService.getUserTotalSizeByName(user, name, type);
+            log.error("查询商品总数操作结果：" + (totalSize != 0 ? "成功" : "失败"));
+            resData.put("totalSize", String.valueOf(totalSize));
             ServletBase.reqSuccess(resData);
         }
         ServletBase.writeJsonToResp(resp, resData);

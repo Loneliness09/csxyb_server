@@ -15,6 +15,10 @@ public interface GoodsDao extends BaseDao<Goods> {
     List<Goods> selectByName(String name, int pageNum, int pageSize);
     List<Goods> selectById(int userId, int pageNum, int pageSize);
     List<Goods> selectByIdAndName(int userId, String name, int pageNum, int pageSize);
-
+    int getTotalSize();
+    int getTotalSizeByName(String name);
+    int getTotalSizeById(int userId);
+    int getTotalSizeByIdAndName(int userId, String name);
     User findGoodsOwner(Goods goods);
+    Goods findGoods(int goodsId);
 }

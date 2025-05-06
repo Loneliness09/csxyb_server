@@ -19,7 +19,7 @@ import java.util.Map;
 
 @WebServlet(name = "UserUpdateServlet", value = "/UserUpdateServlet")
 public class UserUpdateServlet extends HttpServlet {
-    private Logger log = LogManager.getRootLogger();
+    private final Logger log = LogManager.getRootLogger();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -54,10 +54,7 @@ public class UserUpdateServlet extends HttpServlet {
         Map<String, Object> resData = new HashMap<>();
         if (user == null) {
             ServletBase.reqFail(resData);
-            log.error("注销用户操作结果：失败, 未登录");
-        } else if (user.getType() == UserType.regular) {
-            ServletBase.reqFail(resData);
-            log.error("注销用户操作结果：失败, 用户权限不足");
+            log.error("修改用户操作结果：失败, 未登录");
         } else {
             int success = userService.updateUser(user, updUser);
             log.info("进入修改操作，修改用户ID：" + userId + " 操作用户ID：" + user.getUserId());

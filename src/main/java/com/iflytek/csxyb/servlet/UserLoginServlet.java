@@ -16,7 +16,7 @@ import java.util.Map;
 
 @WebServlet(name = "UserLoginServlet", value = "/UserLoginServlet")
 public class UserLoginServlet extends HttpServlet {
-    private Logger log = LogManager.getRootLogger();
+    private final Logger log = LogManager.getRootLogger();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,12 +34,13 @@ public class UserLoginServlet extends HttpServlet {
         log.info("进入登录操作，用户名：" + loginText);
         log.error("登录操作结果：" + (resUser != null ? "成功" : "失败"));
         resp.setContentType("application/json");
-        Map<String, Object> resData = new HashMap<String, Object>();
+        Map<String, Object> resData = new HashMap<>();
         if (resUser != null) {
             ServletBase.reqSuccess(resData);
             req.getSession().setAttribute("loginUser", resUser);
             Cookie c = new Cookie("name", resUser.getUserName());
             resp.addCookie(c);
+            resData.put("loginUser", resUser);
         } else {
             ServletBase.reqFail(resData);
         }

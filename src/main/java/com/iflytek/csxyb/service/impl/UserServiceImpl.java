@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateUser(User user, User updUser) {
-        if (user.getType() == UserType.regular && user.getUserId() != updUser.getUserId()) {
+        if (user.getType() == UserType.regular && user.getUserId() != updUser.getUserId() || User.cmpUser(updUser, user)) {
             return 0;
         } else {
             return userDao.update(updUser);
@@ -58,16 +58,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findUserByName(User user, String userName, int pageNum, int pageSize) {
+    public int updateStatus(User user, User updUser) {
+        if (user.getUserId() == updUser.getUserId()) {
+            return userDao.updateStatus(updUser);
+        } else if (User.cmpUserType(user.getType(), userDao.findUserType(updUser))) {
+            return userDao.updateStatus(updUser);
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public List<User> findUserByName(User user, String userName, int pageNum, int pageSize, UserType type) {
         if (user.getType() != UserType.regular) {
             if (userName == null || "".equals(userName)) {
-                return  userDao.selectAll(pageNum, pageSize);
+                return userDao.selectAll(pageNum, pageSize, type);
             } else {
-                return userDao.selectByName(userName, pageNum, pageSize);
+                return userDao.selectByName(userName, pageNum, pageSize, type);
             }
         } else {
             return null;
         }
     }
 
+    @Override
+    public int getUserTotalSizeByName(User user, String userName, UserType type) {
+        if (user.getType() != UserType.regular) {
+            if (userName == null || "".equals(userName)) {
+                return userDao.getTotalSizeAll(type);
+            } else {
+                return userDao.getTotalSizeByName(userName, type);
+            }
+        } else {
+            return 0;
+        }
+    }
 }

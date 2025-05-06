@@ -10,14 +10,15 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "FindUserServlet", value = "/FindUserServlet")
-public class FindUserServlet extends HttpServlet {
+@WebServlet(name = "UserStatusUpdateServlet", value = "/UserStatusUpdateServlet")
+public class UserStatusUpdateServlet extends HttpServlet {
     private final Logger log = LogManager.getRootLogger();
 
     @Override
@@ -29,26 +30,28 @@ public class FindUserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
+        int userId = Integer.parseInt(req.getParameter("userId"));
         User user = (User) req.getSession().getAttribute("loginUser");
-        resp.setContentType("application/json");
+        UserService userService = new UserServiceImpl();
+        User updUser = new User();
+        updUser.setUserId(userId);
         Map<String, Object> resData = new HashMap<>();
         if (user == null) {
             ServletBase.reqFail(resData);
-            log.error("查询用户操作结果：失败, 未登录");
+            log.error("修改用户状态用户操作结果：失败, 未登录");
         } else if (user.getType() == UserType.regular) {
             ServletBase.reqFail(resData);
-            log.error("查询用户操作结果：失败, 用户权限不足");
+            log.error("修改用户状态操作结果：失败, 用户权限不足");
         } else {
-            log.info("进入查询用户操作，用户名：" + user.getUserName());
-            UserService userService = new UserServiceImpl();
-            String name = req.getParameter("userName");
-            int pageSize = Integer.parseInt(req.getParameter("pageSize"));
-            int pageNum = Integer.parseInt(req.getParameter("pageNum"));
-            UserType type = UserType.valueOf(req.getParameter("userType"));
-            List<User> userList = userService.findUserByName(user, name, pageNum, pageSize, type);
-            log.error("查询用户操作结果：" + (userList != null ? "成功" : "失败, 未找到指定用户"));
-            resData.put("data", userList);
-            ServletBase.reqSuccess(resData);
+            int success = userService.updateStatus(user, updUser);
+            log.info("进入修改用户状态操作，注销用户ID：" + userId + " 操作用户ID：" + user.getUserId());
+            log.error("修改用户状态操作结果：" + (success != 0 ? "成功" : "失败"));
+            resp.setContentType("application/json");
+            if (success != 0) {
+                ServletBase.reqSuccess(resData);
+            } else {
+                ServletBase.reqFail(resData);
+            }
         }
         ServletBase.writeJsonToResp(resp, resData);
     }

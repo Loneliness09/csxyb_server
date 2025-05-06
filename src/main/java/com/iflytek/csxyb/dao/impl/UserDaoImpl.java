@@ -1,7 +1,6 @@
 package com.iflytek.csxyb.dao.impl;
 
 import com.iflytek.csxyb.dao.UserDao;
-import com.iflytek.csxyb.entity.Goods;
 import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.entity.UserType;
 import com.iflytek.csxyb.utils.DBCP;
@@ -15,10 +14,10 @@ import java.util.List;
 
 public class UserDaoImpl implements UserDao {
     @Override
-    public List<User> selectAll(int pageNum, int pageSize) {
+    public List<User> selectAll(int pageNum, int pageSize, UserType type) {
         List<User> resLst = new ArrayList<>();
         try (Connection conn = DBCP.getConnection();
-             PreparedStatement ps = createSelectAllPreparedStatement(conn, pageNum, pageSize);
+             PreparedStatement ps = createSelectAllPreparedStatement(conn, pageNum, pageSize, type);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 resLst.add(mapRowToUser(rs));
@@ -29,18 +28,19 @@ public class UserDaoImpl implements UserDao {
         return resLst;
     }
 
-    private PreparedStatement createSelectAllPreparedStatement(Connection conn, int pageNum, int pageSize) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from user where type!='root' limit ?, ?");
-        ps.setInt(1, (pageNum - 1) * pageSize);
-        ps.setInt(2, pageSize);
+    private PreparedStatement createSelectAllPreparedStatement(Connection conn, int pageNum, int pageSize, UserType type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from user where type!='root' and type=? limit ?, ?");
+        ps.setString(1, type.toString());
+        ps.setInt(2, (pageNum - 1) * pageSize);
+        ps.setInt(3, pageSize);
         return ps;
     }
 
     @Override
-    public List<User> selectByName(String userName, int pageNum, int pageSize) {
+    public List<User> selectByName(String userName, int pageNum, int pageSize, UserType type) {
         List<User> resLst = new ArrayList<>();
         try (Connection conn = DBCP.getConnection();
-             PreparedStatement ps = createSelectByNamePreparedStatement(conn, userName, pageNum, pageSize);
+             PreparedStatement ps = createSelectByNamePreparedStatement(conn, userName, pageNum, pageSize, type);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 resLst.add(mapRowToUser(rs));
@@ -51,11 +51,54 @@ public class UserDaoImpl implements UserDao {
         return resLst;
     }
 
-    private PreparedStatement createSelectByNamePreparedStatement(Connection conn, String userName, int pageNum, int pageSize) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("select * from user where userName like ? and type!='root' limit ?, ?");
+    private PreparedStatement createSelectByNamePreparedStatement(Connection conn, String userName, int pageNum, int pageSize, UserType type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from user where userName like ? and type!='root' and type=? limit ?, ?");
         ps.setString(1, "%" + userName + "%");
-        ps.setInt(2, (pageNum - 1) * pageSize);
-        ps.setInt(3, pageSize);
+        ps.setString(2, type.toString());
+        ps.setInt(3, (pageNum - 1) * pageSize);
+        ps.setInt(4, pageSize);
+        return ps;
+    }
+
+    @Override
+    public int getTotalSizeAll(UserType type) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeAllPreparedStatement(conn, type);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeAllPreparedStatement(Connection conn, UserType type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(userId) from user where type!='root' and type=?");
+        ps.setString(1, type.toString());
+        return ps;
+    }
+
+    @Override
+    public int getTotalSizeByName(String userName, UserType type) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByNamePreparedStatement(conn, userName, type);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+    private PreparedStatement createGetTotalSizeByNamePreparedStatement(Connection conn, String userName, UserType type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(userId) from user where userName like ? and type!='root' and type=?");
+        ps.setString(1, "%" + userName + "%");
+        ps.setString(2, type.toString());
         return ps;
     }
 
@@ -223,5 +266,8 @@ public class UserDaoImpl implements UserDao {
         return ps;
     }
 
-
+    @Override
+    public List<User> selectAll(int pageNum, int pageSize) {
+        return null;
+    }
 }
