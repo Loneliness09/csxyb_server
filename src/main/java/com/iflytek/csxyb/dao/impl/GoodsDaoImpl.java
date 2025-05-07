@@ -389,6 +389,94 @@ public class GoodsDaoImpl implements GoodsDao {
     }
 
     @Override
+    public int getTotalSizeByType(String type) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByTypePreparedStatement(conn, type);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeByTypePreparedStatement(Connection conn, String type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(goodsId) from Goods where JSON_CONTAINS(goodsLable, ?)");
+        ps.setString(1, '"' + type + '"');
+        return ps;
+    }
+
+    @Override
+    public int getTotalSizeByNameAndType(String name, String type) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByNameAndTypePreparedStatement(conn, name, type);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeByNameAndTypePreparedStatement(Connection conn, String name, String type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(goodsId) from Goods where goodsText like ? and JSON_CONTAINS(goodsLable, ?)");
+        ps.setString(1, "%" + name + "%");
+        ps.setString(2, '"' + type + '"');
+        return ps;
+    }
+
+    @Override
+    public int getTotalSizeByIdAndType(int userId, String type) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByIdAndTypePreparedStatement(conn, userId, type);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeByIdAndTypePreparedStatement(Connection conn, int userId, String type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(goodsId) from Goods where userId=? and JSON_CONTAINS(goodsLable, ?)");
+        ps.setInt(1, userId);
+        ps.setString(2, '"' + type + '"');
+        return ps;
+    }
+
+    @Override
+    public int getTotalSizeByIdAndNameAndType(int userId, String name, String type) {
+        int totalSize = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createGetTotalSizeByIdAndNameAndTypePreparedStatement(conn, userId, name, type);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                totalSize = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalSize;
+    }
+
+    private PreparedStatement createGetTotalSizeByIdAndNameAndTypePreparedStatement(Connection conn, int userId, String name, String type) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select count(goodsId) from Goods where userId=? and goodsText like ? and JSON_CONTAINS(goodsLable, ?)");
+        ps.setInt(1, userId);
+        ps.setString(2, "%" + name + "%");
+        ps.setString(3, '"' + type + '"');
+        return ps;
+    }
+
+    @Override
     public int updateStatus(Goods goods) {
         int affectedRows = 0;
         try (Connection conn = DBCP.getConnection();

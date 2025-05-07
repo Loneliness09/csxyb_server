@@ -33,6 +33,23 @@ public class Goods {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "goodsId=" + goodsId +
+                ", userId=" + userId +
+                ", goodsText='" + goodsText + '\'' +
+                ", goodsImg='" + goodsImg + '\'' +
+                ", goodsTopImg='" + goodsTopImg + '\'' +
+                ", goodsLabel='" + goodsLabel + '\'' +
+                ", pinLunNumber=" + pinLunNumber +
+                ", goodsTime=" + goodsTime +
+                ", goodsPrice=" + goodsPrice +
+                ", goodsPriceText='" + goodsPriceText + '\'' +
+                ", status=" + status +
+                '}';
+    }
+
     public int getGoodsId() {
         return goodsId;
     }

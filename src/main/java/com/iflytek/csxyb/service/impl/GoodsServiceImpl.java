@@ -93,4 +93,21 @@ public class GoodsServiceImpl implements GoodsService {
             }
         }
     }
+
+    @Override
+    public int getGoodsTotalSizeByNameAndType(User user, String goodsName, String type) {
+        if (user.getType() != UserType.regular) {
+            if (goodsName == null || "".equals(goodsName)) {
+                return goodsDao.getTotalSizeByType(type);
+            } else {
+                return goodsDao.getTotalSizeByNameAndType(goodsName, type);
+            }
+        } else {
+            if (goodsName == null || "".equals(goodsName)) {
+                return goodsDao.getTotalSizeByIdAndType(user.getUserId(), type);
+            } else {
+                return goodsDao.getTotalSizeByIdAndNameAndType(user.getUserId(), goodsName, type);
+            }
+        }
+    }
 }

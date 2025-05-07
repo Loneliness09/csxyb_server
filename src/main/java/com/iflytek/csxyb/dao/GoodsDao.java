@@ -23,6 +23,10 @@ public interface GoodsDao extends BaseDao<Goods> {
     int getTotalSizeByName(String name);
     int getTotalSizeById(int userId);
     int getTotalSizeByIdAndName(int userId, String name);
+    int getTotalSizeByType(String type);
+    int getTotalSizeByNameAndType(String name, String type);
+    int getTotalSizeByIdAndType(int userId, String type);
+    int getTotalSizeByIdAndNameAndType(int userId, String name, String type);
     User findGoodsOwner(Goods goods);
     Goods findGoods(int goodsId);
 }

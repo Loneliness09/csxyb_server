@@ -10,6 +10,7 @@ public interface GoodsService {
     List<Goods> findGoodsByName(User user, String goodsName, int pageNum, int pageSize);
     List<Goods> findGoodsByNameAndType(User user, String goodsName, String goodsType, int pageNum, int pageSize);
     int getGoodsTotalSizeByName(User user, String goodsName);
+    int getGoodsTotalSizeByNameAndType(User user, String goodsName, String type);
 
     int updateGoods(User user, Goods goods);
 
