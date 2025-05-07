@@ -61,6 +61,23 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    public List<Goods> findGoodsByNameAndType(User user, String goodsName, String goodsType, int pageNum, int pageSize) {
+        if (user.getType() != UserType.regular) {
+            if (goodsName == null || "".equals(goodsName)) {
+                return goodsDao.selectAllByType(goodsType, pageNum, pageSize);
+            } else {
+                return goodsDao.selectByNameAndType(goodsName, goodsType, pageNum, pageSize);
+            }
+        } else {
+            if (goodsName == null || "".equals(goodsName)) {
+                return goodsDao.selectByIdAndType(user.getUserId(), goodsType, pageNum, pageSize);
+            } else {
+                return goodsDao.selectByIdAndNameAndType(user.getUserId(), goodsName, goodsType, pageNum, pageSize);
+            }
+        }
+    }
+
+    @Override
     public int getGoodsTotalSizeByName(User user, String goodsName) {
         if (user.getType() != UserType.regular) {
             if (goodsName == null || "".equals(goodsName)) {

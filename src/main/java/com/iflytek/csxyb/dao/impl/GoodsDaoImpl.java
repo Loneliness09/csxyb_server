@@ -209,6 +209,103 @@ public class GoodsDaoImpl implements GoodsDao {
     }
 
     @Override
+    public List<Goods> selectAllByType(String goodsType, int pageNum, int pageSize) {
+        List<Goods> resLst = new ArrayList<>();
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createSelectAllByTypePreparedStatement(conn, goodsType, pageNum, pageSize);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resLst.add(mapRowToGoods(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resLst;
+    }
+
+    private PreparedStatement createSelectAllByTypePreparedStatement(Connection conn, String goodsType, int pageNum, int pageSize) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from Goods where JSON_CONTAINS(goodsLable, ?) limit ?, ?");
+        ps.setString(1, '"' + goodsType + '"');
+        ps.setInt(2, (pageNum - 1) * pageSize);
+        ps.setInt(3, pageSize);
+        return ps;
+    }
+
+    @Override
+    public List<Goods> selectByNameAndType(String name, String goodsType, int pageNum, int pageSize) {
+        List<Goods> resLst = new ArrayList<>();
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createSelectByNameAndTypePreparedStatement(conn, goodsType, name, pageNum, pageSize);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resLst.add(mapRowToGoods(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resLst;
+    }
+
+
+
+    private PreparedStatement createSelectByNameAndTypePreparedStatement(Connection conn, String name, String goodsType, int pageNum, int pageSize) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from Goods where goodsText like ? and JSON_CONTAINS(goodsLable, ?) limit ?, ?");
+        ps.setString(1, "%" + name + "%");
+        ps.setString(2, '"' + goodsType + '"');
+        ps.setInt(3, (pageNum - 1) * pageSize);
+        ps.setInt(4, pageSize);
+        return ps;
+    }
+
+    @Override
+    public List<Goods> selectByIdAndType(int userId, String goodsType, int pageNum, int pageSize) {
+        List<Goods> resLst = new ArrayList<>();
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createSelectByIdAndTypePreparedStatement(conn, userId, goodsType, pageNum, pageSize);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resLst.add(mapRowToGoods(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resLst;
+    }
+
+    private PreparedStatement createSelectByIdAndTypePreparedStatement(Connection conn, int userId, String goodsType, int pageNum, int pageSize) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from Goods where userId=? and JSON_CONTAINS(goodsLable, ?) limit ?, ?");
+        ps.setInt(1, userId);
+        ps.setString(2, '"' + goodsType + '"');
+        ps.setInt(3, (pageNum - 1) * pageSize);
+        ps.setInt(4, pageSize);
+        return ps;
+    }
+    @Override
+    public List<Goods> selectByIdAndNameAndType(int userId, String name, String goodsType, int pageNum, int pageSize) {
+        List<Goods> resLst = new ArrayList<>();
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createSelectByIdAndNameAndTypePreparedStatement(conn, userId, goodsType, name, pageNum, pageSize);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                resLst.add(mapRowToGoods(rs));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resLst;
+    }
+
+    private PreparedStatement createSelectByIdAndNameAndTypePreparedStatement(Connection conn, int userId, String goodsType, String name, int pageNum, int pageSize) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("select * from Goods where userId=? and goodsText like ? and JSON_CONTAINS(goodsLable, ?) limit ?, ?");
+        ps.setInt(1, userId);
+        ps.setString(2, "%" + name + "%");
+        ps.setString(3, '"' + goodsType + '"');
+        ps.setInt(4, (pageNum - 1) * pageSize);
+        ps.setInt(5, pageSize);
+        return ps;
+    }
+
+    @Override
     public int getTotalSize() {
         int totalSize = 0;
         try (Connection conn = DBCP.getConnection();

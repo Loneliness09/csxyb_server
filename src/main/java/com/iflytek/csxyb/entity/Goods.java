@@ -1,7 +1,5 @@
 package com.iflytek.csxyb.entity;
 
-import com.google.gson.Gson;
-
 import java.sql.Date;
 
 public class Goods {
