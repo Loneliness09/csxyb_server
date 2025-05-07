@@ -32,8 +32,9 @@ public class UserRegisterServlet extends HttpServlet {
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
      * req.Param:
-     * loginText: 用户登录名
-     * password: 密码
+     *            userName: 用户昵称
+     *            loginText: 用户登录名(不可重复)
+     *            password: 密码
      * @return:
      * resp.status: 200
      */
@@ -41,10 +42,11 @@ public class UserRegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
+        String userName = req.getParameter("userName");
         String loginText = req.getParameter("loginText");
         String password = req.getParameter("password");
         UserService userService = new UserServiceImpl();
-        int success = userService.register(loginText, password);
+        int success = userService.register(userName, loginText, password);
         log.info("进入注册操作，用户名：" + loginText);
         log.error("登录操作结果：" + (success != 0 ? "成功" : "失败"));
         resp.setContentType("application/json");

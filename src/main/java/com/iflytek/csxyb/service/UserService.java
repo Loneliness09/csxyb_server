@@ -9,7 +9,7 @@ public interface UserService {
     User loginByText(String loginText, String password);
     int register(User user);
 
-    int register(String loginText, String password);
+    int register(String userName, String loginText, String password);
 
     int unRegister(User user, User delUser);
     int updateUser(User user, User updUser);

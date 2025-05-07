@@ -7,6 +7,8 @@ import com.iflytek.csxyb.entity.UserType;
 import com.iflytek.csxyb.service.UserService;
 
 import java.util.List;
+import java.util.PrimitiveIterator;
+import java.util.Random;
 
 public class UserServiceImpl implements UserService {
     UserDao userDao = new UserDaoImpl();
@@ -27,8 +29,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int register(String loginText, String password) {
+    public int register(String userName, String loginText, String password) {
         User user = new User();
+        if (userName==null || "".equals(userName)) {
+            Random random = new Random();
+            PrimitiveIterator.OfInt ofInt = random.ints().iterator();
+            user.setUserName("User" + Math.abs(ofInt.next()));
+        } else {
+            user.setUserName(userName);
+        }
         user.setLoginText(loginText);
         user.setPassword(password);
         return userDao.insert(user);

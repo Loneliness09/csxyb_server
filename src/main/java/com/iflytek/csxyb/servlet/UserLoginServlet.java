@@ -31,8 +31,8 @@ public class UserLoginServlet extends HttpServlet {
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
      * req.Param:
-     * loginText: 用户登录名
-     * password: 密码
+     *            loginText: 用户登录名
+     *            password: 密码
      * @return:
      * resp.status: 200
      * resp.loginUser: User

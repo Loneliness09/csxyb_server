@@ -34,15 +34,15 @@ public class UserUpdateServlet extends HttpServlet {
      * @param req: HttpServletRequest
      * @param resp: HttpServletResponse
      * req.Param:
-     * userId: 用户ID
-     * userName: 用户昵称
-     * loginText: 登录名
-     * password: 密码
-     * phoneNumber: 手机号
-     * email: 邮箱
-     * wx: 微信号
-     * type: 用户类型 {admin, regular}
-     * remark: 个性签名
+     *            userId: 用户ID
+     *            userName: 用户昵称
+     *            loginText: 登录名
+     *            password: 密码
+     *            phoneNumber: 手机号
+     *            email: 邮箱
+     *            wx: 微信号
+     *            type: 用户类型 {admin, regular}
+     *            remark: 个性签名
      * @return:
      * resp.status: 200
      */
