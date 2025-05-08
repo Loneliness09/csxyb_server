@@ -5,18 +5,18 @@ import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.entity.UserType;
 import com.iflytek.csxyb.service.UserService;
 import com.iflytek.csxyb.service.impl.UserServiceImpl;
+import com.iflytek.csxyb.servlet.base.ServletBase;
 import com.iflytek.csxyb.utils.audio.api.CreateFeature;
 import com.iflytek.csxyb.utils.audio.api.SearchOneFeature;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import javax.servlet.http.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "AudioLoginServlet", value = "/AudioLoginServlet")  // 映射到 /api/upload
 @MultipartConfig  // 启用多部分表单处理
@@ -42,7 +42,7 @@ public class AudioLoginServlet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");  // 设置字符编码
         UserService userService = new UserServiceImpl();
         User user = userService.findUserByLoginText(loginText);
-
+        resp.setContentType("application/json");
         try {
             // 获取上传的文件部分
             Part filePart = req.getPart("file");  // "file" 是表单字段名
@@ -82,15 +82,29 @@ public class AudioLoginServlet extends HttpServlet {
 
             // 调用转换方法
             Audio.mp3Converter(tempFile.getAbsolutePath(), convertedFilePath);
-            SearchOneFeature.doSearchOneFeature(requestUrl,APPID,apiSecret,apiKey,convertedFilePath,user);
+            double score = SearchOneFeature.doSearchOneFeature(requestUrl,APPID,apiSecret,apiKey,convertedFilePath,user);
             // 删除临时文件
             tempFile.delete();
+            filePart.delete();
+            System.out.println(score);
+            Map<String, Object> resData = new HashMap<>();
+            if (score > 0.5) {
+                ServletBase.reqSuccess(resData);
+                req.getSession().setAttribute("loginUser", user);
+                Cookie c = new Cookie("name", user.getUserName());
+                resp.addCookie(c);
+                resData.put("loginUser", user);
+            } else {
+                ServletBase.reqFail(resData);
+            }
 
             // 返回成功响应
-            resp.getWriter().write("音频文件已成功上传并转换为：" + convertedFilePath);
+            ServletBase.writeJsonToResp(resp, resData);
         } catch (IOException e) {
             e.printStackTrace();
-            resp.getWriter().write("文件上传失败：" + e.getMessage());
+            Map<String, Object> resData = new HashMap<>();
+            ServletBase.reqFail(resData);
+            ServletBase.writeJsonToResp(resp, resData);
         }
     }
 

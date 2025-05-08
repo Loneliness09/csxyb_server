@@ -52,18 +52,21 @@ public class SearchOneFeature {
     }
 
     //提供给主函数调用的方法
-    public static void doSearchOneFeature(String requestUrl,String APPID,String apiSecret,String apiKey,String AUDIO_PATH, User user) {
+    public static double doSearchOneFeature(String requestUrl,String APPID,String apiSecret,String apiKey,String AUDIO_PATH, User user) {
         SearchOneFeature searchOneFeature = new SearchOneFeature(requestUrl, APPID, apiSecret, apiKey, AUDIO_PATH);
         searchOneFeature.setUser(user);
+        double score = 0.0;
         try {
             String resp = searchOneFeature.doRequest();
             JsonParse myJsonParse = json.fromJson(resp, JsonParse.class);
             String textBase64Decode=new String(Base64.getDecoder().decode(myJsonParse.payload.searchScoreFeaRes.text), "UTF-8");
             JSONObject jsonObject = JSON.parseObject(textBase64Decode);
             System.out.println("声纹识别1:1"+jsonObject);
+            score = jsonObject.getDoubleValue("score");
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return score;
     }
     /**
      * 请求主方法

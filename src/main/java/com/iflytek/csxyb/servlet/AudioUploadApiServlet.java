@@ -84,6 +84,7 @@ public class AudioUploadApiServlet extends HttpServlet {
             CreateFeature.doCreateFeature(requestUrl,APPID,apiSecret,apiKey,convertedFilePath,user);
             // 删除临时文件
             tempFile.delete();
+            filePart.delete();
 
             // 返回成功响应
             resp.getWriter().write("音频文件已成功上传并转换为：" + convertedFilePath);
