@@ -219,6 +219,9 @@ public class UserDaoImpl implements UserDao {
     }
 
     private PreparedStatement createDeletePreparedStatement(Connection conn, User user) throws SQLException {
+        PreparedStatement ps1 = conn.prepareStatement("DELETE FROM goods WHERE userId=?");
+        ps1.setInt(1, user.getUserId());
+        ps1.executeUpdate();
         PreparedStatement ps = conn.prepareStatement("DELETE FROM user WHERE userId=?");
         ps.setInt(1, user.getUserId());
         return ps;

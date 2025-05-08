@@ -39,6 +39,7 @@ public class UserLoginServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         String loginText = req.getParameter("loginText");
