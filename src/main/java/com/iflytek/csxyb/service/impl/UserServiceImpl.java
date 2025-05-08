@@ -78,6 +78,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public int updateStatus(User user, User updUser, int userStatus) {
+        if (user.getUserId() == updUser.getUserId()) {
+            return userDao.updateStatus(updUser, userStatus);
+        } else if (User.cmpUserType(user.getType(), userDao.findUserType(updUser))) {
+            return userDao.updateStatus(updUser, userStatus);
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public List<User> findUserByName(User user, String userName, int pageNum, int pageSize, UserType type) {
         if (type==UserType.root) {
             return null;
@@ -107,5 +118,10 @@ public class UserServiceImpl implements UserService {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public User findUserByLoginText(String loginText) {
+        return userDao.findUserByLoginText(loginText);
     }
 }

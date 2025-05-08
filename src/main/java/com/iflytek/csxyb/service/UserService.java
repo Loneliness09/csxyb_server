@@ -14,6 +14,8 @@ public interface UserService {
     int unRegister(User user, User delUser);
     int updateUser(User user, User updUser);
     List<User> findUserByName(User user, String userName, int pageNum, int pageSize, UserType type);
+    User findUserByLoginText(String loginText);
     int getUserTotalSizeByName(User user, String userName, UserType type);
     int updateStatus(User user, User updUser);
+    int updateStatus(User user, User updUser, int userStatus);
 }

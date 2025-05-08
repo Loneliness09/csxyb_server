@@ -13,11 +13,13 @@ public interface UserDao extends BaseDao<User> {
     int delete(User user);
     UserType findUserType(User user);
     List<User> selectByName(String userName, int pageNum, int pageSize, UserType type);
+    User findUserByLoginText(String loginText);
 
     int getTotalSizeAll(UserType type);
     int getTotalSizeByName(String userName, UserType type);
 
     User loginByText(User user);
     int updateStatus(User user);
+    int updateStatus(User user, int userStatus);
 
 }

@@ -16,7 +16,7 @@ public class Audio {
                 "-acodec", "mp3",  // 使用 MP3 编码器
                 "-ac", "1",  // 单声道
                 "-ar", "16000",  // 采样率为 16000 Hz
-                "-b:a", "128k",  // 设置音频比特率为 128kbps
+                "-b:a", "64k",  // 设置音频比特率为 128kbps
                 outputPath  // 输出文件
         };
         try {

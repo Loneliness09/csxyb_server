@@ -35,6 +35,7 @@ public class UserStatusUpdateServlet extends HttpServlet {
      * @param resp: HttpServletResponse
      * req.Param:
      *            userId: 用户ID
+     *            userStatus: 状态
      * @return:
      * resp.status: 200
      */
@@ -43,6 +44,7 @@ public class UserStatusUpdateServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         int userId = Integer.parseInt(req.getParameter("userId"));
+        int userStatus = Integer.parseInt(req.getParameter("userStatus"));
         User user = (User) req.getSession().getAttribute("loginUser");
         UserService userService = new UserServiceImpl();
         User updUser = new User();
@@ -55,7 +57,7 @@ public class UserStatusUpdateServlet extends HttpServlet {
             ServletBase.reqFail(resData);
             log.error("修改用户状态操作结果：失败, 用户权限不足");
         } else {
-            int success = userService.updateStatus(user, updUser);
+            int success = userService.updateStatus(user, updUser, userStatus);
             log.info("进入修改用户状态操作，注销用户ID：" + userId + " 操作用户ID：" + user.getUserId());
             log.error("修改用户状态操作结果：" + (success != 0 ? "成功" : "失败"));
             resp.setContentType("application/json");

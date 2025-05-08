@@ -149,9 +149,9 @@ public class CreateFeature {
                 //这里填上所需要的groupId
                 "            \"groupId\": \"" + user.getType().toString() + "\","+
                 //这里填上所需要的featureId
-                "            \"featureId\": \"" + user.getUserId() + "\","+
+                "            \"featureId\": \"" + user.getType().toString() + "_" + user.getUserId() + "\","+
                 //这里填上所需要的featureInfo
-                "            \"featureInfo\": \"" + user.toString() + "\","+
+                "            \"featureInfo\": \"" + user.getUserName() + "\","+
                 "            \"createFeatureRes\": {"+
                 "                \"encoding\": \"utf8\","+
                 "                \"compress\": \"raw\","+

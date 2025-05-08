@@ -3,7 +3,10 @@ package com.iflytek.csxyb.servlet;
 import com.iflytek.csxyb.entity.Audio;
 import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.entity.UserType;
+import com.iflytek.csxyb.service.UserService;
+import com.iflytek.csxyb.service.impl.UserServiceImpl;
 import com.iflytek.csxyb.utils.audio.api.CreateFeature;
+import com.iflytek.csxyb.utils.audio.api.SearchOneFeature;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -15,9 +18,9 @@ import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 
-@WebServlet(name = "AudioUploadApiServlet", value = "/AudioUploadApiServlet")  // 映射到 /api/upload
+@WebServlet(name = "AudioLoginServlet", value = "/AudioLoginServlet")  // 映射到 /api/upload
 @MultipartConfig  // 启用多部分表单处理
-public class AudioUploadApiServlet extends HttpServlet {
+public class AudioLoginServlet extends HttpServlet {
     private static String requestUrl = "https://api.xf-yun.com/v1/private/s782b4996";
 
     //控制台获取以下信息
@@ -31,16 +34,14 @@ public class AudioUploadApiServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        User user = (User) req.getSession().getAttribute("loginUser");
+
         resp.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
         resp.setContentType("text/plain");  // 设置响应内容类型
+        String loginText = req.getParameter("loginText");
+        System.out.println(loginText);
         resp.setCharacterEncoding("UTF-8");  // 设置字符编码
-        if (user==null) {
-            user = new User();
-            user.setUserId(1);
-            user.setType(UserType.root);
-            user.setUserName(".thy");
-        }
+        UserService userService = new UserServiceImpl();
+        User user = userService.findUserByLoginText(loginText);
 
         try {
             // 获取上传的文件部分
@@ -61,7 +62,7 @@ public class AudioUploadApiServlet extends HttpServlet {
             }
 
             // 定义文件存储路径
-            String uploadDir = "D:\\uploadAudio";
+            String uploadDir = "D:\\uploadAudio\\loginAudio";
             File uploadPath = new File(uploadDir);
 
             // 如果目录不存在，则创建目录
@@ -72,7 +73,7 @@ public class AudioUploadApiServlet extends HttpServlet {
             // 构造文件保存路径
 //            String originalFileName = getFileNameFromPart(filePart);  // 提取文件名
             String tempFilePath = uploadDir + File.separator + "temp_" + user.getUserId() + ".mp3";
-            String convertedFilePath = uploadDir + File.separator + "audioKey_" + user.getUserId() + ".mp3";
+            String convertedFilePath = uploadDir + File.separator + "loginAudioKey_" + user.getUserId() + ".mp3";
 
             File tempFile = new File(tempFilePath);
 
@@ -81,7 +82,7 @@ public class AudioUploadApiServlet extends HttpServlet {
 
             // 调用转换方法
             Audio.mp3Converter(tempFile.getAbsolutePath(), convertedFilePath);
-            CreateFeature.doCreateFeature(requestUrl,APPID,apiSecret,apiKey,convertedFilePath,user);
+            SearchOneFeature.doSearchOneFeature(requestUrl,APPID,apiSecret,apiKey,convertedFilePath,user);
             // 删除临时文件
             tempFile.delete();
 

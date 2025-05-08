@@ -1,3 +1,5 @@
+import com.iflytek.csxyb.entity.User;
+import com.iflytek.csxyb.entity.UserType;
 import com.iflytek.csxyb.utils.audio.api.*;
 import org.junit.Test;
 
@@ -17,6 +19,10 @@ public class ApiTest {
     private static String AUDIO_PATH;
     @Test
     public void test() throws UnsupportedEncodingException {
+        User user = new User();
+        user.setType(UserType.root);
+        user.setUserId(1);
+        user.setUserName("111");
         AUDIO_PATH = Upgoin.getLatestFilePath("audioExample");
         System.setOut(new PrintStream(System.out, true, "UTF-8"));
         System.out.println("你好");
@@ -26,11 +32,11 @@ public class ApiTest {
         CreateGroup.doCreateGroup(requestUrl,APPID,apiSecret,apiKey, "aaa", "aaa");
 
         /**2.添加音频特征*/
-//        CreateFeature.doCreateFeature(requestUrl,APPID,apiSecret,apiKey,AUDIO_PATH);
+        CreateFeature.doCreateFeature(requestUrl,APPID,apiSecret,apiKey,AUDIO_PATH, user);
         /**3.查询特征列表*/
         QueryFeatureList.doQueryFeatureList(requestUrl,APPID,apiSecret,apiKey);
         /**4.特征比对1:1*/
-        SearchOneFeature.doSearchOneFeature(requestUrl,APPID,apiSecret,apiKey,AUDIO_PATH);
+        SearchOneFeature.doSearchOneFeature(requestUrl,APPID,apiSecret,apiKey,AUDIO_PATH, user);
         /**5.特征比对1:N*/
         SearchFeature.doSearchFeature(requestUrl,APPID,apiSecret,apiKey,AUDIO_PATH);
         /**6.更新音频特征*/
@@ -46,6 +52,7 @@ public class ApiTest {
         CreateGroup.doCreateGroup(requestUrl,APPID,apiSecret,apiKey, "admin", "admin");
         CreateGroup.doCreateGroup(requestUrl,APPID,apiSecret,apiKey, "regular", "regular");
         CreateGroup.doCreateGroup(requestUrl,APPID,apiSecret,apiKey, "root", "root");
+        System.out.println(UserType.regular.toString());
 
     }
     @Test

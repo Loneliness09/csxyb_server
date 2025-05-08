@@ -24,7 +24,7 @@ public class LoginFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         response.setCharacterEncoding("UTF-8");
         String uri = req.getRequestURI();
-        if (uri.contains("/UserLoginServlet") || uri.contains("/AudioUploadApiServlet")){
+        if (uri.contains("/UserLoginServlet") || uri.contains("/AudioUploadApiServlet") || uri.contains("/AudioLoginServlet")){
             chain.doFilter(request, response);
         }else {
             Object loginUser = req.getSession().getAttribute("loginUser");

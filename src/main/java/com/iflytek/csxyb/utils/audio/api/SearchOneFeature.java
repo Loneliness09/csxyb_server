@@ -3,6 +3,7 @@ package com.iflytek.csxyb.utils.audio.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.iflytek.csxyb.entity.User;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,9 +27,18 @@ public class SearchOneFeature {
     private String APPID;
     private String apiSecret;
     private String apiKey;
+    private String AUDIO_PATH;
+    private User user;
     //音频存放位置
-    private static String AUDIO_PATH;
 
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     //解析Json
     private static Gson json = new Gson();
 
@@ -42,8 +52,9 @@ public class SearchOneFeature {
     }
 
     //提供给主函数调用的方法
-    public static void doSearchOneFeature(String requestUrl,String APPID,String apiSecret,String apiKey,String AUDIO_PATH) {
+    public static void doSearchOneFeature(String requestUrl,String APPID,String apiSecret,String apiKey,String AUDIO_PATH, User user) {
         SearchOneFeature searchOneFeature = new SearchOneFeature(requestUrl, APPID, apiSecret, apiKey, AUDIO_PATH);
+        searchOneFeature.setUser(user);
         try {
             String resp = searchOneFeature.doRequest();
             JsonParse myJsonParse = json.fromJson(resp, JsonParse.class);
@@ -140,9 +151,9 @@ public class SearchOneFeature {
                 "        \"s782b4996\": {" +
                 "            \"func\": \"searchScoreFea\"," +
                 //这里填上所需要的groupId
-                "            \"groupId\": \"iFLYTEK_examples_groupId\"," +
+                "            \"groupId\": \"" + user.getType().toString() + "\","+
                 //这里填上所需要的featureId
-                "            \"dstFeatureId\": \"iFLYTEK_examples_featureId\"," +
+                "            \"dstFeatureId\": \"" + user.getType().toString() + "_" + user.getUserId() + "\","+
                 "            \"searchScoreFeaRes\": {" +
                 "                \"encoding\": \"utf8\"," +
                 "                \"compress\": \"raw\"," +

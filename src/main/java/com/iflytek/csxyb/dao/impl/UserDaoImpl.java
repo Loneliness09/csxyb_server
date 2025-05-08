@@ -249,6 +249,27 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public int updateStatus(User user, int userStatus) {
+        int affectedRows = 0;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createUpdateStatusPreparedStatement(conn, user, userStatus)) {
+            affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting user failed, no rows affected.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return affectedRows;
+    }
+    private PreparedStatement createUpdateStatusPreparedStatement(Connection conn, User user, int userStatus) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("UPDATE user SET status=? WHERE userId=?");
+        ps.setInt(1, userStatus);
+        ps.setInt(2, user.getUserId());
+        return ps;
+    }
+
+    @Override
     public UserType findUserType(User user) {
         UserType userType = null;
         try (Connection conn = DBCP.getConnection();
@@ -270,7 +291,29 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public User findUserByLoginText(String loginText) {
+        User user = null;
+        try (Connection conn = DBCP.getConnection();
+             PreparedStatement ps = createFindUserByLoginTextPreparedStatement(conn, loginText);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                user = mapRowToUser(rs);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    private PreparedStatement createFindUserByLoginTextPreparedStatement(Connection conn, String loginText) throws SQLException {
+        PreparedStatement ps = conn.prepareStatement("SELECT * FROM user WHERE loginText=?");
+        ps.setString(1, loginText);
+        return ps;
+    }
+
+    @Override
     public List<User> selectAll(int pageNum, int pageSize) {
         return null;
     }
+
 }
