@@ -50,7 +50,7 @@ public class CreateFeature {
         this.AUDIO_PATH=AUDIO_PATH;
     }
     //提供给主函数调用的方法
-    public static void doCreateFeature(String requestUrl,String APPID,String apiSecret,String apiKey,String AUDIO_PATH, User user){
+    public static int doCreateFeature(String requestUrl,String APPID,String apiSecret,String apiKey,String AUDIO_PATH, User user){
         CreateFeature createFeature = new CreateFeature(requestUrl,APPID,apiSecret,apiKey,AUDIO_PATH);
         createFeature.setUser(user);
         try {
@@ -60,8 +60,10 @@ public class CreateFeature {
             String textBase64Decode=new String(Base64.getDecoder().decode(myJsonParse.payload.createFeatureRes.text), "UTF-8");
             JSONObject jsonObject = JSON.parseObject(textBase64Decode);
             System.out.println("添加音频特征"+jsonObject);
+            return 1;
         } catch (Exception e) {
             e.printStackTrace();
+            return 0;
         }
     }
     /**

@@ -3,17 +3,17 @@ package com.iflytek.csxyb.servlet;
 import com.iflytek.csxyb.entity.Audio;
 import com.iflytek.csxyb.entity.User;
 import com.iflytek.csxyb.entity.UserType;
+import com.iflytek.csxyb.servlet.base.ServletBase;
 import com.iflytek.csxyb.utils.audio.api.CreateFeature;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import javax.servlet.http.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @WebServlet(name = "AudioUploadApiServlet", value = "/AudioUploadApiServlet")  // 映射到 /api/upload
 @MultipartConfig  // 启用多部分表单处理
@@ -33,8 +33,8 @@ public class AudioUploadApiServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         User user = (User) req.getSession().getAttribute("loginUser");
         resp.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
-        resp.setContentType("text/plain");  // 设置响应内容类型
         resp.setCharacterEncoding("UTF-8");  // 设置字符编码
+        resp.setContentType("application/json");
         if (user==null) {
             user = new User();
             user.setUserId(1);
@@ -81,16 +81,26 @@ public class AudioUploadApiServlet extends HttpServlet {
 
             // 调用转换方法
             Audio.mp3Converter(tempFile.getAbsolutePath(), convertedFilePath);
-            CreateFeature.doCreateFeature(requestUrl,APPID,apiSecret,apiKey,convertedFilePath,user);
+            int success = CreateFeature.doCreateFeature(requestUrl,APPID,apiSecret,apiKey,convertedFilePath,user);
             // 删除临时文件
             tempFile.delete();
             filePart.delete();
 
             // 返回成功响应
-            resp.getWriter().write("音频文件已成功上传并转换为：" + convertedFilePath);
+            Map<String, Object> resData = new HashMap<>();
+            if (success == 1) {
+                ServletBase.reqSuccess(resData);
+            } else {
+                ServletBase.reqFail(resData);
+            }
+
+            // 返回成功响应
+            ServletBase.writeJsonToResp(resp, resData);
         } catch (IOException e) {
             e.printStackTrace();
-            resp.getWriter().write("文件上传失败：" + e.getMessage());
+            Map<String, Object> resData = new HashMap<>();
+            ServletBase.reqFail(resData);
+            ServletBase.writeJsonToResp(resp, resData);
         }
     }
 

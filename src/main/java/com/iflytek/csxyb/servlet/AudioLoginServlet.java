@@ -36,7 +36,6 @@ public class AudioLoginServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
 
         resp.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
-        resp.setContentType("text/plain");  // 设置响应内容类型
         String loginText = req.getParameter("loginText");
         System.out.println(loginText);
         resp.setCharacterEncoding("UTF-8");  // 设置字符编码
@@ -96,6 +95,7 @@ public class AudioLoginServlet extends HttpServlet {
                 resData.put("loginUser", user);
             } else {
                 ServletBase.reqFail(resData);
+                resData.put("reason", "low score");
             }
 
             // 返回成功响应
